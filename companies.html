@@ -1,0 +1,163 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ai-bees</title>
+    <link crossorigin="anonymous"
+          href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.min.css"
+          integrity="sha256-8B1OaG0zT7uYA572S2xOxWACq9NXYPQ+U5kHPV1bJN4="
+          rel="stylesheet"/>
+          <link rel="shortcut icon" href="https://ai-bees.io/wp-content/uploads/2019/05/favi.png" type="image/x-icon" />
+
+
+
+    <style>
+        #customers {
+            font-family: Arial, Helvetica, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        #customers td, #customers th {
+            border: 1px solid #Ffc904;
+            border-bottom: 1px solid #Ffc904;
+            padding: 8px;
+            color: #Ffc904;
+        }
+
+        #customers tr:nth-child(even){background-color: #333;}
+        #customers tr:nth-child(odd){background-color: #444;}
+
+        /*#customers tr:hover {background-color: #ddd;}*/
+
+        #customers th {
+            border: 1px solid black;
+            padding-top: 12px;
+            padding-bottom: 12px;
+            text-align: left;
+            background-color: #Ffc904;
+            color: black;
+        }
+    </style>
+</head>
+<body style="position: absolute; width: 100%; height: 100%;"> 
+<nav aria-label="main navigation" class="navbar is-light" role="navigation" style="height: 10%;">
+    <div class="navbar-brand">
+        <div class="navbar-item">
+            <img atl="Ai-bees" src="https://pbs.twimg.com/profile_images/1270625001885126657/oQVGpOPu_400x400.jpg"
+                 style="margin-right: 0.5em;">
+        </div>
+
+        <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="sumbit">Search similar companies</button>
+        </form>
+        
+    </div>
+    
+</nav>
+
+<div style="
+    height: 90%;
+    overflow: scroll;">
+    <table id="customers">
+        <thead style="width:100%">
+            <tr>
+                <th style="min-width: 250px">Company</th>
+                <th style="min-width: 150px">Social Media</th>
+                <th>Lookalike</th>
+                <th>Domain</th>
+                <th style="min-width: 80px">Size</th>
+                <th style="min-width: 150px">Country</th>
+                <th style="min-width: 300px;">Keywords</th>
+                <th style="min-width: 200px;">Industry Categories</th>
+                <th>Contacts</th>
+                <th style="min-width: 150px;">Web Traffic</th>
+                <th>Social Presence</th>
+                <th style="text-align: center;">Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for company in companies %}
+            <tr>
+                <td style="min-width: 250px">
+                    <p style="padding-top: 8px;
+                        padding-left: 8px;
+                        font-weight: 1500;
+                        min-width: 300px;
+                        width: fit-content;">
+                        {{ company.name }}
+                    </p>
+                    <a href={{company.domain_callable}} target="_blank">
+                    <img src="{{ company.logo }}" style=" 
+                        padding-top: 8px;  
+                        min-width: 200px;
+                        width: fit-content;
+                        max-height: 300px;
+                        height: fit-content;
+                        object-fit: contain;
+                        vertical-align: middle;
+                        border-radius: 2px;
+                        border-color: #Ffc904 ;">
+                        </a>
+                </td>
+                <td style="min-width: 150px">
+
+                    {% if company.twitter  %}
+                    <a href="{{company.twitter}}" target="_blank">
+                        <img src="{% static 'images/Twitter.png' %}" alt="Image" width="20" height="20">
+                    </a>            
+                    {% endif %}
+                
+                    {% if company.linkedIn  %}
+                    <a href="{{company.linkedIn}}" target="_blank">
+                        <img src="{% static 'images/LinkedIn.png' %}" alt="Image" width="20" height="20">
+                    </a>           
+                    {% endif %}
+                    {% if company.facebook  %}
+                    <a href="{{company.facebook}}" target="_blank">
+                        <img src="{% static 'images/FB.png' %}" alt="Image" width="20" height="20">
+                    </a>          
+                    {% endif %}
+                    {% if company.instagram  %}
+                    <a href="{{company.instagram}}" target="_blank">
+                        <img src="https://assets.stickpng.com/images/580b57fcd9996e24bc43c521.png" width="20" height="20">
+                    </a>          
+                    {% endif %}  
+                </td>
+                <td>{{ company.relevance }}</td>
+                <td><a href={{company.domain_callable}} target="_blank" style="color: #Ffc904;">{{ company.domain }}</a></td>
+                <td style="min-width: 80px">{{ company.size }}</td>
+                <td style="min-width: 150px">
+                    {% for country in company.countries %}
+                        <p>{{ country }}</p>
+                    {% endfor %}</td>
+                <td style="min-width: 300px;">
+                    {% for keyword in company.keywords %}
+                        <p>{{ keyword }}</p>
+                    {% endfor %}
+
+                </td>
+                <td style="min-width: 200px;">
+                    {% for industry in company.industryCategories %}
+                        <p>{{ industry.name }}</p>
+                    {% endfor %}
+
+                </td>
+                <td>
+                    {% for phone in company.phones %} 
+                        <p>{{phone}}</p>
+                    {% endfor %}
+                </td>
+                <td>{{ company.webTraffic.visits }}</td>
+                <td>{{ company.socialPresence }}</td>
+                <td style="min-width: 500px;">{{ company.description }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
